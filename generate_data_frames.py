@@ -22,7 +22,7 @@ from opendeepsearch.advancements.AdvancedAgent import (
 # Loading all global variables defined in .env file of working directory
 load_dotenv()
 
-num_samples = 24
+num_samples = 5
 shuffle = True
 
 # GETTING THE MODEL
@@ -44,7 +44,7 @@ data_frame = pd.read_csv('evals/datasets/frames_test_set.csv')
 
 dataset = Dataset.from_pandas(data_frame)
 if shuffle:
-    dataset.shuffle()
+    dataset = dataset.shuffle()
 if not num_samples is None:
     dataset = dataset.select(range(num_samples))
 else:
@@ -55,7 +55,7 @@ else:
 # Using Serper (default)
 search_tool = OpenDeepSearchTool(
     model_name=search_model_name,
-    reranker="jina",
+    reranker="infinity",
     search_provider='serper',
 )
 search_tool.setup()
@@ -82,7 +82,7 @@ for idx, entry in enumerate(dataset):
     print('\033[95m' + f"\nTesting sample number {idx + 1} out of {num_samples}\n" + '\033[0m')
 
     start_time = time.time()
-    answer = agent.run(prompt)
+    answer = agent.run(prompt, max_steps=15)
     end_time = time.time()
 
     # Remove memory from logs to make them more compact.
