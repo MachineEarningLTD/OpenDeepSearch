@@ -18,30 +18,5 @@ if not search_agent.is_initialized:
     
 query = "Fastest land animal?"
 
-cumDump = requests.post(
-                "https://google.serper.dev/search",
-                headers={
-                    'X-API-KEY': "16c5da0d588ea2065171cc4a8ee8b934a660101d",
-                    'Content-Type': 'application/json'
-                    # What does content-type do?
-                },
-                json={
-                "q": "Who is the current President of the united states",
-                "num": 10,
-                "gl": "us"
-            },
-            timeout=10
-            )
-dump = cumDump.json()
-print(dump)
-print("dump type: ")
-print(type(dump))
-print("\n\n\n\n")
-print(dump["organic"])
-print("\n\n\n")
-for i in range(0,10):
-    print(dump["organic"][i])
-    print("\n\n\n")
-
 result = search_agent.forward(query)
 print(result)
