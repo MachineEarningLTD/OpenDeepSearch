@@ -41,6 +41,8 @@ if shuffle:
     dataset.shuffle()
 if not num_samples is None:
     dataset = dataset.select(range(num_samples))
+else:
+    num_samples = len(dataset)
 
 # SETTING UP ALL THE TOOLS
 
@@ -68,6 +70,8 @@ filename = f"out/output_trial_{timestamp}.jsonl"
 for idx, entry in enumerate(dataset):
     prompt = entry['question']
 
+    print('\033[95m' + f"\nTesting sample number {idx + 1} out of {num_samples}\n" + '\033[0m')
+
     start_time = time.time()
     answer = agent.run(prompt)
     end_time = time.time()
@@ -89,6 +93,8 @@ for idx, entry in enumerate(dataset):
         "end_time": end_time,
         "token_counts": agent.monitor.get_total_token_counts(),
     }
+
+    print('\033[95m' + f"\nActual final answer is {annotated_output['true_answer']}\n" + '\033[0m')
 
     # SAVING THE RESULT
     with open(filename, 'a') as f:
