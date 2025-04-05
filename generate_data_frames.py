@@ -26,7 +26,12 @@ shuffle = True
 
 # GETTING THE MODEL
 search_model_name = "fireworks_ai/accounts/fireworks/models/llama-v3p3-70b-instruct"
+reasoning_model_name = "fireworks_ai/accounts/fireworks/models/qwen2p5-coder-32b-instruct"
 code_model_name = "fireworks_ai/accounts/fireworks/models/qwen2p5-coder-32b-instruct"
+reasoning_model = LiteLLMModel(
+    model_id=reasoning_model_name,
+    temperature=0.2,
+)
 code_model = LiteLLMModel(
     model_id=code_model_name,
     temperature=0.2,
@@ -58,9 +63,12 @@ search_tool.setup()
 # SETTING UP THE AGENT
 agent = AdvancedAgent(
     tools=[search_tool],
-    model=code_model,
+    reasoning_model=reasoning_model,
+    code_model=code_model,
     additional_authorized_imports=["numpy"],
-    prompt_templates=CodeAgentPrompt
+    prompt_templates=CodeAgentPrompt,
+    code_prompt_template={},
+    final_answer_checks=[]
 )
 
 # RUNNING THE EVALUATION
