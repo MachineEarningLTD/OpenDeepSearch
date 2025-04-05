@@ -21,7 +21,7 @@ from opendeepsearch.advancements.AdvancedAgent import (
 # Loading all global variables defined in .env file of working directory
 load_dotenv()
 
-num_samples = 24
+num_samples = 10
 shuffle = True
 
 # GETTING THE MODEL

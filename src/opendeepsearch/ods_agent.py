@@ -118,48 +118,53 @@ class OpenDeepSearchAgent:
         return build_context(processed_sources)
 
     async def ask(
-        self,
-        query: str,
-        max_sources: int = 2,
-        pro_mode: bool = False,
-    ) -> str:
-        """
-        Searches for information and generates an AI response to the query.
+            self,
+            query: str,
+            max_sources: int = 1,
+            pro_mode: bool = False,
+            max_context_chars: int = 400000,  # Using character count instead of tokens
+        ) -> str:
+            """
+            Searches for information and generates an AI response to the query.
 
-        This method combines web search, context building, and AI completion to provide
-        informed answers to questions. It first gathers relevant information through search,
-        then uses an LLM to generate a response based on the collected context.
+            Args:
+                query (str): The question or query to answer.
+                max_sources (int, default=1): Maximum number of sources to include in the context.
+                pro_mode (bool, default=False): When enabled, performs a more comprehensive search.
+                max_context_chars (int, default=32000): Maximum characters for context.
 
-        Args:
-            query (str): The question or query to answer.
-            max_sources (int, default=2): Maximum number of sources to include in the context.
-            pro_mode (bool, default=False): When enabled, performs a more comprehensive search
-                and analysis of sources.
+            Returns:
+                str: An AI-generated response that answers the query based on the gathered context.
+            """
+            # Get context from search results
+            context = await self.search_and_build_context(query, max_sources, pro_mode)
+            
+            # Simple truncation based on character count
+            if len(context) > max_context_chars:
+                context = context[:max_context_chars]
+            
+            # Prepare messages for the LLM
+            messages = [
+                {"role": "system", "content": self.system_prompt},
+                {"role": "user", "content": f"Context:\n{context}\n\nQuestion: {query}"}
+            ]
+            
+            # Get completion from LLM
+            response = completion(
+                model=self.model,
+                messages=messages,
+                temperature=self.temperature,
+                top_p=self.top_p
+            )
 
-        Returns:
-            str: An AI-generated response that answers the query based on the gathered context.
-        """
-        # Get context from search results
-        context = await self.search_and_build_context(query, max_sources, pro_mode)
-        # Prepare messages for the LLM
-        messages = [
-            {"role": "system", "content": self.system_prompt},
-            {"role": "user", "content": f"Context:\n{context}\n\nQuestion: {query}"}
-        ]
-        # Get completion from LLM
-        response = completion(
-            model=self.model,
-            messages=messages,
-            temperature=self.temperature,
-            top_p=self.top_p
-        )
+            return response.choices[0].message.content
 
-        return response.choices[0].message.content
+
 
     def ask_sync(
         self,
         query: str,
-        max_sources: int = 2,
+        max_sources: int = 1,
         pro_mode: bool = False,
     ) -> str:
         """
