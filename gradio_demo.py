@@ -1,5 +1,6 @@
 from smolagents import CodeAgent, GradioUI, LiteLLMModel
 from opendeepsearch import OpenDeepSearchTool
+from opendeepsearch import CrawlTool
 import os
 from dotenv import load_dotenv
 import argparse

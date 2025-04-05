@@ -5,7 +5,7 @@ from huggingface_hub import hf_hub_download
 import wikipediaapi
 
 # Load the model
-model = fasttext.load_model(hf_hub_download("kenhktsui/llm-data-textbook-quality-fasttext-classifer-v2", "model.bin"))
+#model = fasttext.load_model(hf_hub_download("kenhktsui/llm-data-textbook-quality-fasttext-classifer-v2", "model.bin"))
 
 def clean_markdown_links(text: str, min_quality_score: float = 0.2) -> Tuple[str, float]:
     """
@@ -55,7 +55,8 @@ def clean_markdown_links(text: str, min_quality_score: float = 0.2) -> Tuple[str
     cleaned_text = '\n\n'.join(cleaned_paragraphs)
     
     # Get quality score
-    quality_score = predict_educational_value([cleaned_text])[0]
+    #quality_score = predict_educational_value([cleaned_text])[0]
+    quality_score = 0.5
     
     return cleaned_text, quality_score
 
@@ -93,7 +94,7 @@ score_dict = {
     '__label__Mid': 1,
     '__label__High': 2
 }
-
+"""
 def predict_educational_value(text_list: List[str]) -> List[float]:
     """
     Predict educational value scores for a list of texts.
@@ -108,6 +109,7 @@ def predict_educational_value(text_list: List[str]) -> List[float]:
             score += score_dict[_l] * _s
         score_list.append(float(score))
     return score_list
+"""
 
 def get_wikipedia_content(url: str) -> str | None:
     """

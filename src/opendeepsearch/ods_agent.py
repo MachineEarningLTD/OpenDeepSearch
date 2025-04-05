@@ -83,7 +83,7 @@ class OpenDeepSearchAgent:
     async def search_and_build_context(
         self,
         query: str,
-        max_sources: int = 2,
+        max_sources: int = 1,
         pro_mode: bool = False
     ) -> str:
         """
