@@ -14,12 +14,13 @@ from smolagents.agents import ActionStep
 # Loading all global variables defined in .env file of working directory
 load_dotenv()
 
-num_samples = 8
+num_samples = 24
 
 # GETTING THE MODEL
-model_name = "fireworks_ai/accounts/fireworks/models/llama-v3p3-70b-instruct"
-model = LiteLLMModel(
-    model_id=model_name,
+search_model_name = "fireworks_ai/accounts/fireworks/models/llama-v3p3-70b-instruct"
+code_model_name = "fireworks_ai/accounts/fireworks/models/llama-v3p3-70b-instruct"
+code_model = LiteLLMModel(
+    model_id=code_model_name,
     temperature=0.2,
 )
 
@@ -33,7 +34,7 @@ dataset = Dataset.from_pandas(data_frame).shuffle().select(range(num_samples))
 
 # Using Serper (default)
 search_tool = OpenDeepSearchTool(
-    model_name=model_name,
+    model_name=search_model_name,
     reranker="jina",
     search_provider='serper',
 )
@@ -43,10 +44,9 @@ search_tool.setup()
 # SETTING UP THE AGENT
 agent = CodeAgent(
     tools=[search_tool],
-    model=model,
+    model=code_model,
     additional_authorized_imports=["numpy", "web_search"]
 )
-    
 
 # RUNNING THE EVALUATION
 timestamp = datetime.now().strftime("%H_%M_%S")
@@ -66,7 +66,7 @@ for idx, entry in enumerate(dataset):
     
     annotated_output = {
         "idx": idx,
-        "model_id": model.model_id,
+        "model_id": code_model.model_id,
         "agent_action_type": 'MachineEarning',
         "original_question": entry['question'],
         "answer": answer,
