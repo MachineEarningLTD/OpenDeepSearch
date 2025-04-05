@@ -22,6 +22,7 @@ from opendeepsearch.advancements.AdvancedAgent import (
 load_dotenv()
 
 num_samples = 24
+shuffle = True
 
 # GETTING THE MODEL
 search_model_name = "fireworks_ai/accounts/fireworks/models/llama-v3p3-70b-instruct"
@@ -34,8 +35,12 @@ code_model = LiteLLMModel(
 # GETTING THE DATASET
 # data_frame = pd.read_csv('evals/datasets/simple_qa_test_set.csv')
 data_frame = pd.read_csv('evals/datasets/frames_test_set.csv')
-dataset = Dataset.from_pandas(data_frame).shuffle().select(range(num_samples))
 
+dataset = Dataset.from_pandas(data_frame)
+if shuffle:
+    dataset.shuffle()
+if not num_samples is None:
+    dataset = dataset.select(range(num_samples))
 
 # SETTING UP ALL THE TOOLS
 
