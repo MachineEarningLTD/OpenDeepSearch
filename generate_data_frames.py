@@ -14,6 +14,9 @@ from smolagents.agents import ActionStep
 from opendeepsearch.advancements.AdvancedPrompts import (
     CodeAgentPrompt
 )
+from opendeepsearch.advancements.AdvancedAgent import (
+    AdvancedAgent
+)
 
 # Loading all global variables defined in .env file of working directory
 load_dotenv()
@@ -46,7 +49,7 @@ search_tool.setup()
 
 
 # SETTING UP THE AGENT
-agent = CodeAgent(
+agent = AdvancedAgent(
     tools=[search_tool],
     model=code_model,
     additional_authorized_imports=["numpy"],
