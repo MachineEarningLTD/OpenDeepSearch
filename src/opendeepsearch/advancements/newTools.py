@@ -2,10 +2,11 @@ from typing import Optional, Literal
 from smolagents import Tool
 from opendeepsearch.ods_agent import OpenDeepSearchAgent
 
-class OpenDeepSearchTool(Tool):
-    name = "web_search"
+
+class SimplifyTool(Tool):
+    name = "simplify"
     description = """
-    Performs web search based on your query (think a Google search) then returns the final answer that is processed by an llm."""
+    To be run in the first """
     inputs = {
         "query": {
             "type": "string",
