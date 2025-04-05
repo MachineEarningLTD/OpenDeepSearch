@@ -26,10 +26,28 @@ class AdvancedAgent(CodeAgent):
         super().__init__(tools, reasoning_model, prompt_templates, grammar, additional_authorized_imports, planning_interval, executor_type, executor_kwargs, max_print_outputs_length, **kwargs)
         self.code_model = code_model
         self.code_prompt_template = code_prompt_template
+        system_prompt = self.code_prompt_template['content'][0]['text'] + '\nTools:\n'
+        for tool in self.tools.values():
+            system_prompt += f"<new_tool>\n"
+            system_prompt += f"tool_name: {tool.name}\n"
+            system_prompt += f"tool_description: {tool.description}\n"
+            system_prompt += f"tool_inputs: {tool.inputs}\n"
+            system_prompt += f"tool_output_type: {tool.output_type}\n"
+        self.code_prompt_template['content'][0]['text'] = system_prompt
 
     def format_code_prompt(self, reasoning_out_message):
         code_model_prompt = [self.code_prompt_template]
-        pass
+        llm_output = reasoning_out_message.content
+        if '<start_delegation>' not in llm_output or '<end_delegation>' not in llm_output:
+            return None
+        actions = llm_output[llm_output.rfind('<start_delegation>'):llm_output.rfind('<end_delegation>')]
+        code_model_prompt.append({
+            'role': 'tool-call',
+            'content': [{
+                'type': 'text',
+                'text': actions
+            }]
+        })
         return code_model_prompt
 
     

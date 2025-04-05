@@ -12,7 +12,8 @@ from smolagents import CodeAgent, MultiStepAgent, GradioUI, LiteLLMModel
 from smolagents.agents import ActionStep
 
 from opendeepsearch.advancements.AdvancedPrompts import (
-    CodeAgentPrompt
+    ReasoningAgentPrompt,
+    code_prompt
 )
 from opendeepsearch.advancements.AdvancedAgent import (
     AdvancedAgent
@@ -66,8 +67,8 @@ agent = AdvancedAgent(
     reasoning_model=reasoning_model,
     code_model=code_model,
     additional_authorized_imports=["numpy"],
-    prompt_templates=CodeAgentPrompt,
-    code_prompt_template={},
+    prompt_templates=ReasoningAgentPrompt,
+    code_prompt_template=code_prompt,
     final_answer_checks=[]
 )
 
