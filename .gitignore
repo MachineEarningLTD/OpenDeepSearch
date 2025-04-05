@@ -3,6 +3,11 @@ __pycache__/
 *.py[cod]
 *$py.class
 
+# VSCODE
+.vscode
+.gradio
+.DS_Store
+
 # C extensions
 *.so
 *.ipynb

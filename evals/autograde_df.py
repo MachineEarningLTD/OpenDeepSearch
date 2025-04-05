@@ -1,9 +1,13 @@
 import pandas as pd
+import json
 import litellm
 import argparse
 from evals.grader_prompts import GRADER_TEMPLATE
 from multiprocessing import Pool, cpu_count
 from tqdm import tqdm
+from dotenv import load_dotenv
+load_dotenv()
+
 
 def grade_row(row_data):
     idx, row = row_data
@@ -66,3 +70,15 @@ if __name__ == "__main__":
     
     args = parser.parse_args()
     autograde_df(args.df_path, args.num_cpus)
+
+    num_correct = 0
+    num_samples = 0
+    df = pd.read_json(args.df_path, lines=True)
+
+    for output in df.iterrows():
+        num_samples += 1
+        if output[1].iloc[-1] == "A\n":
+            num_correct += 1
+
+    print(f"\nFinal accuracy is {num_correct / num_samples * 100:.2f} %")
+            
