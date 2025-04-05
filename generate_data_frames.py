@@ -22,7 +22,7 @@ num_samples = 24
 
 # GETTING THE MODEL
 search_model_name = "fireworks_ai/accounts/fireworks/models/llama-v3p3-70b-instruct"
-code_model_name = "fireworks_ai/accounts/fireworks/models/llama-v3p3-70b-instruct"
+code_model_name = "fireworks_ai/accounts/fireworks/models/qwen2p5-coder-32b-instruct"
 code_model = LiteLLMModel(
     model_id=code_model_name,
     temperature=0.2,
