@@ -11,6 +11,10 @@ from datetime import datetime
 from smolagents import CodeAgent, MultiStepAgent, GradioUI, LiteLLMModel
 from smolagents.agents import ActionStep
 
+from opendeepsearch.advancements.AdvancedPrompts import (
+    CodeAgentPrompt
+)
+
 # Loading all global variables defined in .env file of working directory
 load_dotenv()
 
@@ -45,7 +49,8 @@ search_tool.setup()
 agent = CodeAgent(
     tools=[search_tool],
     model=code_model,
-    additional_authorized_imports=["numpy", "web_search"]
+    additional_authorized_imports=["numpy"],
+    prompt_templates=CodeAgentPrompt
 )
 
 # RUNNING THE EVALUATION
