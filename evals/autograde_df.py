@@ -5,6 +5,9 @@ import argparse
 from evals.grader_prompts import GRADER_TEMPLATE
 from multiprocessing import Pool, cpu_count
 from tqdm import tqdm
+from dotenv import load_dotenv
+load_dotenv()
+
 
 def grade_row(row_data):
     idx, row = row_data
@@ -77,5 +80,5 @@ if __name__ == "__main__":
         if output[1].iloc[-1] == "A\n":
             num_correct += 1
 
-    print(f"\nFinal accuracy is {num_correct / num_samples:.2f} %")
+    print(f"\nFinal accuracy is {num_correct / num_samples * 100:.2f} %")
             

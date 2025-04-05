@@ -14,17 +14,18 @@ from smolagents.agents import ActionStep
 # Loading all global variables defined in .env file of working directory
 load_dotenv()
 
-num_samples = 3
+num_samples = 8
 
 # GETTING THE MODEL
-model_name = "fireworks_ai/accounts/fireworks/models/deepseek-r1"
+model_name = "fireworks_ai/accounts/fireworks/models/llama-v3p3-70b-instruct"
 model = LiteLLMModel(
     model_id=model_name,
     temperature=0.2,
 )
 
 # GETTING THE DATASET
-data_frame = pd.read_csv('evals/datasets/simple_qa_test_set.csv')
+# data_frame = pd.read_csv('evals/datasets/simple_qa_test_set.csv')
+data_frame = pd.read_csv('evals/datasets/frames_test_set.csv')
 dataset = Dataset.from_pandas(data_frame).shuffle().select(range(num_samples))
 
 
@@ -33,17 +34,24 @@ dataset = Dataset.from_pandas(data_frame).shuffle().select(range(num_samples))
 # Using Serper (default)
 search_tool = OpenDeepSearchTool(
     model_name=model_name,
-    reranker="jina"
+    reranker="jina",
+    search_provider='serper',
 )
 search_tool.setup()
 
 
 # SETTING UP THE AGENT
-agent = CodeAgent(tools=[search_tool], model=model)
+agent = CodeAgent(
+    tools=[search_tool],
+    model=model,
+    additional_authorized_imports=["numpy", "web_search"]
+)
     
 
 # RUNNING THE EVALUATION
-output_results = []
+timestamp = datetime.now().strftime("%H_%M_%S")
+filename = f"out/output_trial_{timestamp}.jsonl"
+
 for idx, entry in enumerate(dataset):
     prompt = entry['question']
 
@@ -68,14 +76,10 @@ for idx, entry in enumerate(dataset):
         "end_time": end_time,
         "token_counts": agent.monitor.get_total_token_counts(),
     }
-    output_results.append(annotated_output)
 
-# SAVING THE RESULT
-timestamp = datetime.now().strftime("%H_%M_%S")
-filename = f"out/output_trial_{timestamp}.jsonl"
-with open(filename, 'a') as f:
-    for output in output_results:
-        json.dump(output, f)
+    # SAVING THE RESULT
+    with open(filename, 'a') as f:
+        json.dump(annotated_output, f)
         f.write("\n")
 
 
