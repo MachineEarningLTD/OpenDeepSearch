@@ -40,7 +40,7 @@ dataset = Dataset.from_pandas(data_frame)
 
 start = 600
 stop = len(dataset)
-if stop and start:
+if (stop or stop==0) and start:
     num_samples = stop - start
 else: num_samples = None
 
