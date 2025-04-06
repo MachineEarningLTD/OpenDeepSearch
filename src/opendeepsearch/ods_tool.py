@@ -5,7 +5,7 @@ from opendeepsearch.ods_agent import OpenDeepSearchAgent
 class OpenDeepSearchTool(Tool):
     name = "web_search"
     description = """
-    Performs web search based on your query (think a Google search) then returns the final answer that is processed by an llm."""
+    Performs web search based on your query (think a Google search) then returns the final answer that is processed by an llm. Since it is a google search you should use keywords rather than entire sentences"""
     inputs = {
         "query": {
             "type": "string",
