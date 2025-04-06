@@ -19,6 +19,7 @@ from opendeepsearch.advancements.AdvancedPrompts import (
 from opendeepsearch.advancements.AdvancedAgent import (
     AdvancedAgent
 )
+from opendeepsearch.advancements.crawl_tool import CrawlTool
 
 # Loading all global variables defined in .env file of working directory
 load_dotenv()
@@ -70,6 +71,10 @@ search_tool = OpenDeepSearchTool(
 )
 search_tool.setup()
 
+# We never used this tool for the final evaluation!!
+crawl_tool = CrawlTool()
+crawl_tool.setup()
+
 
 # SETTING UP THE AGENT
 agent = CodeAgent(
@@ -78,6 +83,8 @@ agent = CodeAgent(
     additional_authorized_imports=["numpy"],
     prompt_templates=CodeAgentPrompt
 )
+
+# TRIPLE AGENT IMPLEMENTATION
 # agent = AdvancedAgent(
 #     tools=[search_tool],
 #     code_model=code_model,
