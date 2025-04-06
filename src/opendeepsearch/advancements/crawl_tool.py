@@ -66,7 +66,6 @@ class CrawlTool(Tool):
         return "Error: Website scraping unsuccessful."
 
     def setup(self):
-        load_dotenv()
         self.app=FirecrawlApp(api_key=os.getenv('FIRECRAWL_API_KEY'))
 
 """
