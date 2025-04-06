@@ -52,13 +52,13 @@ class SourceProcessor:
         num_elements: int, 
         query: str, 
         pro_mode: bool = False
-    ) -> List[dict]:
+    ) -> Tuple[List[dict], str]:
         try:
-            valid_sources = self._get_valid_sources(sources, num_elements)
+            valid_sources = self._get_valid_sources(sources, 3)
             if not valid_sources:
                 return sources
 
-            #html_contents = await self._fetch_html_contents([s[1]['link'] for s in valid_sources])
+            html_contents = await self._fetch_html_contents([s[1]['link'] for s in valid_sources])
             """
             html_contents = []
 
@@ -74,17 +74,23 @@ class SourceProcessor:
             for s in valid_sources:
                 print(f"LInks: {s[1]['link']}")
 
+            concatenated_links = ""
 
-            html_contents = await self._fetch_html_contents_new([s[1]['link'] for s in valid_sources])
+            # Option 1: Using string concatenation in a loop
+            for s in valid_sources:
+                concatenated_links += s[1]['link'] + "|"
 
-            print(f"Fetched HTML contents: {html_contents}")
+
+            #html_contents = await self._fetch_html_contents_new([s[1]['link'] for s in valid_sources])
+
+            #print(f"Fetched HTML contents: {html_contents}")
 
             #print(f"Fetched HTML contents: {html_contents_new}")
 
-            return self._update_sources_with_content(sources.data, valid_sources, html_contents, query)
+            return self._update_sources_with_content(sources.data, valid_sources, html_contents, query), concatenated_links
         except Exception as e:
             print(f"Error in process_sources: {e}")
-            return sources
+            return sources, "No links"
 
     def _get_valid_sources(self, sources: List[dict], num_elements: int) -> List[Tuple[int, dict]]:
         return [(i, source) for i, source in enumerate(sources.data['organic'][:num_elements]) if source]
@@ -137,6 +143,6 @@ class SourceProcessor:
         query: str
     ) -> List[dict]:
         for (i, source), html in zip(valid_sources, html_contents):
-            source['html'] = html#self._process_html_content(html, query)
+            source['html'] = self._process_html_content(html, query)
             # sources[i] = source
         return sources

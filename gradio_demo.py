@@ -61,8 +61,10 @@ model = LiteLLMModel(
     temperature=0.2,
 )
 
+crawl_tool = CrawlTool()
+
 # Initialize the agent with the search tool
-agent = CodeAgent(tools=[search_tool], model=model)
+agent = CodeAgent(tools=[search_tool, crawl_tool], model=model)
 
 # Add a name when initializing GradioUI
 GradioUI(agent).launch(server_name="127.0.0.1", server_port=args.server_port, share=True)

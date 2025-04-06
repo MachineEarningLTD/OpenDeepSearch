@@ -1,4 +1,4 @@
-from typing import Optional, Dict, Any, Literal
+from typing import Optional, Dict, Any, Literal, Tuple
 from opendeepsearch.serp_search.serp_search import create_search_api, SearchAPI
 from opendeepsearch.context_building.process_sources_pro import SourceProcessor
 from opendeepsearch.context_building.build_context import build_context
@@ -9,6 +9,7 @@ from opendeepsearch.prompts import SEARCH_SYSTEM_PROMPT
 import asyncio
 import nest_asyncio
 load_dotenv()
+
 
 class OpenDeepSearchAgent:
     def __init__(
@@ -85,7 +86,7 @@ class OpenDeepSearchAgent:
         query: str,
         max_sources: int = 1,
         pro_mode: bool = False
-    ) -> str:
+    ) -> Tuple[str, str]:
         """
         Performs a web search and builds a context from the search results.
 
@@ -107,7 +108,7 @@ class OpenDeepSearchAgent:
         sources = self.serp_search.get_sources(query)
 
         # Process sources
-        processed_sources = await self.source_processor.process_sources(
+        processed_sources, links = await self.source_processor.process_sources(
             sources,
             max_sources,
             query,
@@ -115,7 +116,7 @@ class OpenDeepSearchAgent:
         )
 
         # Build and return context
-        return build_context(processed_sources)
+        return build_context(processed_sources), links
 
     async def ask(
             self,
@@ -123,7 +124,7 @@ class OpenDeepSearchAgent:
             max_sources: int = 1,
             pro_mode: bool = False,
             max_context_chars: int = 400000,  # Using character count instead of tokens
-        ) -> str:
+        ) -> Tuple[str, str]:
             """
             Searches for information and generates an AI response to the query.
 
@@ -137,7 +138,7 @@ class OpenDeepSearchAgent:
                 str: An AI-generated response that answers the query based on the gathered context.
             """
             # Get context from search results
-            context = await self.search_and_build_context(query, max_sources, pro_mode)
+            context, links = await self.search_and_build_context(query, max_sources, pro_mode)
             
             # Simple truncation based on character count
             if len(context) > max_context_chars:
@@ -157,7 +158,7 @@ class OpenDeepSearchAgent:
                 top_p=self.top_p
             )
 
-            return response.choices[0].message.content
+            return response.choices[0].message.content + f"Useful links that can be viewed with the scrape_site tool: {links}"
 
 
 
