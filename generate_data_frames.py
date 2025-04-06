@@ -21,11 +21,11 @@ from opendeepsearch.advancements.AdvancedAgent import (
 # Loading all global variables defined in .env file of working directory
 load_dotenv()
 
-num_samples = 5
-shuffle = True
+max_steps = 15
+shuffle = False
 
 # GETTING THE MODEL
-search_model_name = "fireworks_ai/accounts/fireworks/models/llama-v3p3-70b-instruct"
+search_model_name = "fireworks_ai/accounts/fireworks/models/qwen2-vl-72b-instruct"
 code_model_name = "fireworks_ai/accounts/fireworks/models/qwen2p5-coder-32b-instruct"
 code_model = LiteLLMModel(
     model_id=code_model_name,
@@ -37,10 +37,19 @@ code_model = LiteLLMModel(
 data_frame = pd.read_csv('evals/datasets/frames_test_set.csv')
 
 dataset = Dataset.from_pandas(data_frame)
+
+start = 600
+stop = len(dataset)
+if stop and start:
+    num_samples = stop - start
+else: num_samples = None
+
+
 if shuffle:
     dataset = dataset.shuffle()
+    dataset = dataset.shuffle()
 if not num_samples is None:
-    dataset = dataset.select(range(num_samples))
+    dataset = dataset.select(range(start, stop))
 else:
     num_samples = len(dataset)
 
@@ -64,16 +73,15 @@ agent = AdvancedAgent(
 )
 
 # RUNNING THE EVALUATION
-timestamp = datetime.now().strftime("%H_%M_%S")
-filename = f"out/output_trial_{timestamp}.jsonl"
+filename = f"out/lionel.jsonl"
 
 for idx, entry in enumerate(dataset):
     prompt = entry['question']
 
-    print('\033[95m' + f"\nTesting sample number {idx + 1} out of {num_samples}\n" + '\033[0m')
+    print('\033[95m' + f"Testing sample {idx + 1} out of {num_samples}" + '\033[0m')
 
     start_time = time.time()
-    answer = agent.run(prompt, max_steps=15)
+    answer = agent.run(prompt, max_steps=max_steps)
     end_time = time.time()
 
     # Remove memory from logs to make them more compact.
@@ -94,7 +102,7 @@ for idx, entry in enumerate(dataset):
         "token_counts": agent.monitor.get_total_token_counts(),
     }
 
-    print('\033[95m' + f"\nActual final answer is {annotated_output['true_answer']}\n" + '\033[0m')
+    print('\033[95m' + f"Actual answer is: {annotated_output['true_answer']}" + '\033[0m')
 
     # SAVING THE RESULT
     with open(filename, 'a') as f:
