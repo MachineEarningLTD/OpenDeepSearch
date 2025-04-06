@@ -44,6 +44,8 @@ To combine the multiple dataframes, we used join_dataset.py
 
 Advancements we did are in src/opendeepsearch/advancements
 
+Our reports and presentation are in the datathon folder.
+
 ## Description 📝
 
 OpenDeepSearch is a lightweight yet powerful search tool designed for seamless integration with AI agents. It enables deep web search and retrieval, optimized for use with Hugging Face's **[SmolAgents](https://github.com/huggingface/smolagents)** ecosystem.
