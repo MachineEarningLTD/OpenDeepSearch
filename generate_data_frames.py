@@ -12,7 +12,9 @@ from smolagents import CodeAgent, MultiStepAgent, GradioUI, LiteLLMModel
 from smolagents.agents import ActionStep
 
 from opendeepsearch.advancements.AdvancedPrompts import (
-    CodeAgentPrompt
+    CodeAgentPrompt,
+    ReasoningAgentPrompt,
+    code_prompt
 )
 from opendeepsearch.advancements.AdvancedAgent import (
     AdvancedAgent
@@ -26,7 +28,12 @@ shuffle = False
 
 # GETTING THE MODEL
 search_model_name = "fireworks_ai/accounts/fireworks/models/qwen2-vl-72b-instruct"
+reasoning_model_name = "fireworks_ai/accounts/fireworks/models/qwen2-vl-72b-instruct"
 code_model_name = "fireworks_ai/accounts/fireworks/models/qwen2p5-coder-32b-instruct"
+reasoning_model = LiteLLMModel(
+    model_id=reasoning_model_name,
+    temperature=0.2,
+)
 code_model = LiteLLMModel(
     model_id=code_model_name,
     temperature=0.2,
@@ -38,7 +45,7 @@ data_frame = pd.read_csv('evals/datasets/frames_test_set.csv')
 
 dataset = Dataset.from_pandas(data_frame)
 
-start = 600
+start = 0
 stop = len(dataset)
 if (stop or stop==0) and start:
     num_samples = stop - start
@@ -64,15 +71,23 @@ search_tool.setup()
 
 
 # SETTING UP THE AGENT
-agent = AdvancedAgent(
+agent = CodeAgent(
     tools=[search_tool],
     model=code_model,
     additional_authorized_imports=["numpy"],
     prompt_templates=CodeAgentPrompt
 )
+# agent = AdvancedAgent(
+#     tools=[search_tool],
+#     code_model=code_model,
+#     reasoning_model=reasoning_model,
+#     additional_authorized_imports=["numpy"],
+#     prompt_templates=ReasoningAgentPrompt,
+#     code_prompt_template=code_prompt
+# )
 
 # RUNNING THE EVALUATION
-filename = f"out/lionel.jsonl"
+filename = f"out/advanced_agent.jsonl"
 
 for idx, entry in enumerate(dataset):
     prompt = entry['question']
