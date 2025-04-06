@@ -34,11 +34,14 @@
         <a href="https://arxiv.org/pdf/2503.20201"> Paper  </a>
 </h4>
 
-## DATATHON SUBMISSION
+## DATATHON SUBMISSION
 
 Our final dataframe is saved in out/dataframe.jsonl
+
 Our main run scrip tis generate_data_frames.py
+
 To combine the multiple dataframes, we used join_dataset.py
+
 Advancements we did are in src/opendeepsearch/advancements
 
 ## Description 📝
