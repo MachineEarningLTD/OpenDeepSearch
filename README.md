@@ -34,6 +34,10 @@
         <a href="https://arxiv.org/pdf/2503.20201"> Paper  </a>
 </h4>
 
+## DATATHON
+
+Our submission is in the working version branch!!!!
+
 ## Description 📝
 
 OpenDeepSearch is a lightweight yet powerful search tool designed for seamless integration with AI agents. It enables deep web search and retrieval, optimized for use with Hugging Face's **[SmolAgents](https://github.com/huggingface/smolagents)** ecosystem.
