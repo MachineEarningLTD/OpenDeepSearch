@@ -38,9 +38,18 @@ class AdvancedAgent(CodeAgent):
     def format_code_prompt(self, reasoning_out_message):
         code_model_prompt = [self.code_prompt_template]
         llm_output = reasoning_out_message.content
-        if '<start_delegation>' not in llm_output or '<end_delegation>' not in llm_output:
-            return None
-        actions = llm_output[llm_output.rfind('<start_delegation>'):llm_output.rfind('<end_delegation>')]
+        if not llm_output.endswith('<end_delegation>'):
+            llm_output += '<end_delegation>'
+        if '<start_delegation>' not in llm_output:
+            code_model_prompt.append({
+                'role': 'tool-call',
+                'content': [{
+                    'type': 'text',
+                    'text': "I didn't provide a delegation to the code manager. Tell me to provide a delegation by printing it."
+                }]
+            })
+            return code_model_prompt
+        actions = llm_output[llm_output.rfind('<start_delegation>'):]
         code_model_prompt.append({
             'role': 'tool-call',
             'content': [{
@@ -66,7 +75,7 @@ class AdvancedAgent(CodeAgent):
             additional_args = {"grammar": self.grammar} if self.grammar is not None else {}
             chat_message: ChatMessage = self.model(
                 self.input_messages,
-                stop_sequences=["<end_code>", "Observation:", "Calling tools:"],
+                stop_sequences=["<end_delegation>", "Observation:", "Calling tools:"],
                 **additional_args,
             )
             memory_step.model_output_message = chat_message
@@ -130,7 +139,7 @@ class AdvancedAgent(CodeAgent):
                         Text("Execution logs:", style="bold"),
                         Text(execution_logs),
                     ]
-                    memory_step.observations = "Execution logs:\n" + execution_logs
+                    memory_step.observations = execution_logs
                     self.logger.log(Group(*execution_outputs_console), level=LogLevel.INFO)
             error_msg = str(e)
             if "Import of " in error_msg and " is not allowed" in error_msg:
@@ -141,7 +150,7 @@ class AdvancedAgent(CodeAgent):
             raise AgentExecutionError(error_msg, self.logger)
 
         truncated_output = truncate_content(str(output))
-        observation += "Last output from code snippet:\n" + truncated_output
+        # observation += "Last output from code snippet:\n" + truncated_output
         memory_step.observations = observation
 
         execution_outputs_console += [

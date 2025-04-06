@@ -26,8 +26,8 @@ num_samples = 5
 shuffle = True
 
 # GETTING THE MODEL
-search_model_name = "fireworks_ai/accounts/fireworks/models/llama-v3p3-70b-instruct"
-reasoning_model_name = "fireworks_ai/accounts/fireworks/models/qwen2p5-coder-32b-instruct"
+search_model_name = "fireworks_ai/accounts/fireworks/models/qwen2-vl-72b-instruct"
+reasoning_model_name = "fireworks_ai/accounts/fireworks/models/qwen2-vl-72b-instruct"
 code_model_name = "fireworks_ai/accounts/fireworks/models/qwen2p5-coder-32b-instruct"
 reasoning_model = LiteLLMModel(
     model_id=reasoning_model_name,
@@ -55,7 +55,7 @@ else:
 # Using Serper (default)
 search_tool = OpenDeepSearchTool(
     model_name=search_model_name,
-    reranker="infinity",
+    reranker="jina",
     search_provider='serper',
 )
 search_tool.setup()
